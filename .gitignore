@@ -1,0 +1,14 @@
+# Build directories
+/build/
+/bin/
+/obj/
+
+# CMake files
+CMakeFiles/
+CMakeCache.txt
+Makefile
+*.cmake
+
+# Other system files
+.DS_Store
+Thumbs.db
