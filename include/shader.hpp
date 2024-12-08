@@ -10,20 +10,25 @@ enum class ShaderType
     Fragment = GL_FRAGMENT_SHADER
 };
 
+struct ShaderSources
+{
+    std::string vertex;
+    std::string fragment;
+};
+
 class MyShader
 {
 private:
     GLuint shaderProgram, vertexShader, fragmentShader, VAO, VBO;
     GLuint compileShader(const char *shaderSource, ShaderType shaderType);
-
-public:
-    MyShader();
-    ~MyShader();
-
-    bool compileVertexShader(const char *vertexShaderSource);
-    bool compileFragmentShader(const char *fragmentShaderSource);
+    ShaderSources sources;
 
     bool bindShaders();
+    void validateShader(std::string vertexShaderSource, std::string fragmentShaderSource);
+    
+public:
+    MyShader(ShaderSources sources);
+    ~MyShader();
 
     void use();
 

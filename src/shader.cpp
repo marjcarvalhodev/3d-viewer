@@ -1,21 +1,19 @@
 #include "shader.hpp"
 
-MyShader::MyShader()
-    : shaderProgram(0), vertexShader(0), fragmentShader(0) {}
+MyShader::MyShader(ShaderSources sources)
+    : sources(sources), shaderProgram(0), vertexShader(0), fragmentShader(0)
+{
+    validateShader(sources.vertex, sources.fragment);
+    
+    vertexShader = compileShader(sources.vertex.c_str(), ShaderType::Vertex);
+    fragmentShader = compileShader(sources.fragment.c_str(), ShaderType::Fragment);
+}
 
 MyShader::~MyShader()
 {
     if (shaderProgram)
     {
         glDeleteProgram(shaderProgram);
-    }
-    if (vertexShader)
-    {
-        glDeleteShader(vertexShader);
-    }
-    if (fragmentShader)
-    {
-        glDeleteShader(fragmentShader);
     }
 }
 
@@ -43,18 +41,6 @@ GLuint MyShader::compileShader(const char *shaderSource, ShaderType shaderType)
     return shader;
 }
 
-bool MyShader::compileVertexShader(const char *vertexShaderSource)
-{
-    vertexShader = compileShader(vertexShaderSource, ShaderType::Vertex);
-    return vertexShader != 0;
-}
-
-bool MyShader::compileFragmentShader(const char *fragmentShaderSource)
-{
-    fragmentShader = compileShader(fragmentShaderSource, ShaderType::Fragment);
-    return fragmentShader != 0;
-}
-
 bool MyShader::bindShaders()
 {
     shaderProgram = glCreateProgram();
@@ -77,7 +63,7 @@ bool MyShader::bindShaders()
     glDeleteShader(fragmentShader);
 
     return true; // Indicate success
-}
+};
 
 void MyShader::use()
 {
@@ -87,4 +73,30 @@ void MyShader::use()
 GLuint MyShader::getProgramID() const
 {
     return shaderProgram;
+}
+
+
+void validateShader(std::string vertexShaderSource, std::string fragmentShaderSource)
+{
+    if (vertexShaderSource.empty())
+    {
+        throw std::runtime_error("Vertex shader source is empty.");
+    }
+    if (vertexShaderSource.find("#version") == std::string::npos)
+    {
+        throw std::runtime_error("Vertex shader source does not contain #version directive.");
+    }
+    std::cout << "Vertex Shader Source:\n"
+              << vertexShaderSource << std::endl;
+
+    if (fragmentShaderSource.empty())
+    {
+        throw std::runtime_error("Fragment shader source is empty.");
+    }
+    if (fragmentShaderSource.find("#version") == std::string::npos)
+    {
+        throw std::runtime_error("Fragment shader source does not contain #version directive.");
+    }
+    std::cout << "Fragment Shader Source:\n"
+              << fragmentShaderSource << std::endl;
 }

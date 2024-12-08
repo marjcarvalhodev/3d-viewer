@@ -8,10 +8,8 @@ void render(MyWindow &window, MyShader &shader, MyMesh &mesh);
 
 int main()
 {
-
     try
     {
-
         MyWindow window("3D-Viewer", 800, 600);
         if (!window.init())
         {
@@ -24,35 +22,14 @@ int main()
         glDisable(GL_CULL_FACE);
 
         AssetsManager asmn("assets");
-
         std::string vertexShaderSource = asmn.readFile("basic_shader.vert");
-        if (vertexShaderSource.empty())
-        {
-            throw std::runtime_error("Vertex shader source is empty.");
-        }
-        if (vertexShaderSource.find("#version") == std::string::npos)
-        {
-            throw std::runtime_error("Vertex shader source does not contain #version directive.");
-        }
-        std::cout << "Vertex Shader Source:\n"
-                  << vertexShaderSource << std::endl;
-
         std::string fragmentShaderSource = asmn.readFile("basic_shader.frag");
-        if (fragmentShaderSource.empty())
-        {
-            throw std::runtime_error("Fragment shader source is empty.");
-        }
-        if (fragmentShaderSource.find("#version") == std::string::npos)
-        {
-            throw std::runtime_error("Fragment shader source does not contain #version directive.");
-        }
-        std::cout << "Fragment Shader Source:\n"
-                  << fragmentShaderSource << std::endl;
 
-        MyShader shader;
-        shader.compileVertexShader(vertexShaderSource.c_str());
-        shader.compileFragmentShader(fragmentShaderSource.c_str());
-        shader.bindShaders();
+        ShaderSources sources;
+        sources.vertex = vertexShaderSource;
+        sources.fragment = fragmentShaderSource;
+
+        MyShader shader(sources);
 
         std::vector<float> vertices = {
             0.0f, 0.5f, 0.0f,
