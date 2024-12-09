@@ -29,6 +29,10 @@ public:
     const glm::mat4 &getViewMatrix() const;
 
     const glm::mat4 &getProjectionMatrix() const;
+
+    void setPosition(glm::vec3 newValue);
+    void setTarget(glm::vec3 newValue);
+    void setAspectRatio(float newValue);
 };
 
 #endif

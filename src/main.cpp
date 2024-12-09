@@ -8,6 +8,8 @@
 
 void render(MyWindow &window, MyCamera &camera, MyShader &shader, std::vector<MyMesh> &meshes);
 MyCamera getDefaultCamera(const MyWindow &window);
+// void updateLogic(MyCamera &camera, float accumulatedTime);
+// void windowResize(SDL_Event &event, MyCamera &camera);
 
 int main()
 {
@@ -44,19 +46,39 @@ int main()
         MyCamera camera = getDefaultCamera(window);
 
         SDL_Event event;
+
         bool running = true;
+
+        // float lastUpdateTime = SDL_GetTicks();
+        // float accumulatedTime = 0.0f;
+        // float frames = 0.0f;
 
         while (running)
         {
+            // float currentTime = SDL_GetTicks();
+            // float deltaTime = currentTime - lastUpdateTime;
+            // lastUpdateTime = currentTime;
+
+            // accumulatedTime += deltaTime;
+
             while (SDL_PollEvent(&event))
             {
                 if (event.type == SDL_QUIT)
                 {
                     running = false;
                 }
+
+                // if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
+                // {
+                //     windowResize(event, camera);
+                // }
             }
 
-            render(window, camera, shader, meshes);
+            // while (accumulatedTime >= MS_PER_TICK)
+            // {
+            //     updateLogic(camera, accumulatedTime);
+            //     accumulatedTime -= MS_PER_TICK;
+            // }
         }
 
         return 0;
@@ -89,9 +111,26 @@ MyCamera getDefaultCamera(const MyWindow &window)
 {
     glm::vec3 position = {0.0, 0.0, 3.0};
     glm::vec3 target = {0.0, 0.0, 0.0};
-    glm::vec3 upDir = {0.0, 1.0, 3.0};
+    glm::vec3 upDir = {0.0, 1.0, 0.0};
     float aspectRatio = static_cast<float>(window.getWidth()) / window.getHeight();
 
     MyCamera camera(position, target, upDir, aspectRatio);
     return camera;
 }
+
+// void updateLogic(MyCamera &camera, float accumulatedTime)
+// {
+//     float angle = 180.0;
+//     camera.setTarget(glm::vec3(sin(angle), cos(angle), 0.0));
+// }
+
+// void windowResize(SDL_Event &event, MyCamera &camera)
+// {
+//     int newWidth = event.window.data1;
+//     int newHeight = event.window.data2;
+
+//     glViewport(0, 0, newWidth, newHeight); // Update OpenGL viewport
+
+//     camera.setAspectRatio(static_cast<float>(newWidth) / newHeight); // Update aspect ratio
+//     camera.updateProjectionMatrix();                                 // Recalculate the projection matrix
+// }
