@@ -75,6 +75,12 @@ bool MyWindow::init()
         return false;
     }
 
+    glViewport(0, 0, getWidth(), getHeight());
+    setClearColor();
+    glEnable(GL_DEPTH_TEST);
+    // glDisable(GL_DEPTH_TEST);
+    // glDisable(GL_CULL_FACE);
+
     // Set the initialized flag
     initialized = true;
     return true;

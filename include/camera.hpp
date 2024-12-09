@@ -1,6 +1,7 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP
 
+#include "utils.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -30,9 +31,12 @@ public:
 
     const glm::mat4 &getProjectionMatrix() const;
 
-    void setPosition(glm::vec3 newValue);
-    void setTarget(glm::vec3 newValue);
+    void setPosition(const glm::vec3 &newValue);
+    void setTarget(const glm::vec3 &newValue);
     void setAspectRatio(float newValue);
+
+    auto getPosition() const { return position; }
+    auto getTarget() const { return target; }
 };
 
 #endif

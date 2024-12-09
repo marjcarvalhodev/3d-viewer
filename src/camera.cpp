@@ -27,13 +27,13 @@ const glm::mat4 &MyCamera::getProjectionMatrix() const
     return projectionMatrix;
 }
 
-void MyCamera::setPosition(glm::vec3 newValue)
+void MyCamera::setPosition(const glm::vec3& newValue)
 {
     position = newValue;
     updateViewMatrix();
 }
 
-void MyCamera::setTarget(glm::vec3 newValue)
+void MyCamera::setTarget(const glm::vec3& newValue)
 {
     target = newValue;
     updateViewMatrix();
