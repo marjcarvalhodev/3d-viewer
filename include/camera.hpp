@@ -5,7 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-class Camera
+class MyCamera
 {
 private:
     glm::vec3 position;
@@ -20,7 +20,7 @@ private:
     glm::mat4 projectionMatrix;
 
 public:
-    Camera(const glm::vec3 &pos, const glm::vec3 &tgt, const glm::vec3 &upDir, float aspect);
+    MyCamera(const glm::vec3 &pos, const glm::vec3 &tgt, const glm::vec3 &upDir, float aspect);
 
     void updateViewMatrix();
 

@@ -4,7 +4,7 @@ MyShader::MyShader(ShaderSources sources)
     : sources(sources), shaderProgram(0), vertexShader(0), fragmentShader(0)
 {
     validateShader(sources.vertex, sources.fragment);
-    
+
     vertexShader = compileShader(sources.vertex.c_str(), ShaderType::Vertex);
     fragmentShader = compileShader(sources.fragment.c_str(), ShaderType::Fragment);
 }
@@ -75,8 +75,16 @@ GLuint MyShader::getProgramID() const
     return shaderProgram;
 }
 
+void MyShader::updateShader(const glm::mat4 viewMat, const glm::mat4 projMat)
+{
+    GLuint viewLoc = glGetUniformLocation(getProgramID(), "uView");
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMat));
 
-void validateShader(std::string vertexShaderSource, std::string fragmentShaderSource)
+    GLuint projLoc = glGetUniformLocation(getProgramID(), "uProjection");
+    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projMat));
+}
+
+void MyShader::validateShader(std::string vertexShaderSource, std::string fragmentShaderSource)
 {
     if (vertexShaderSource.empty())
     {

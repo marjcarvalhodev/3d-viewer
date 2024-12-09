@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <GL/glew.h>
+#include <glm/gtc/type_ptr.hpp>
 
 enum class ShaderType
 {
@@ -33,6 +34,7 @@ public:
     void use();
 
     GLuint getProgramID() const;
+    void updateShader(const glm::mat4 viewMat, const glm::mat4 projMat);
 };
 
 #endif

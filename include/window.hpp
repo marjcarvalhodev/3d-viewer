@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include <iostream>
 #include <string>
+#include <glm/glm.hpp>
 
 class MyWindow
 {
@@ -14,13 +15,16 @@ private:
     int width, height;
     std::string title;
     bool initialized;
+    glm::vec4 clearColor;
 
 public:
-    MyWindow(const std::string &title, int width, int height);
+    MyWindow(const std::string &title, int width, int height, glm::vec4 clearColor);
 
     ~MyWindow();
 
     bool init();
+
+    void setClearColor();
 
     void swapBuffers();
 

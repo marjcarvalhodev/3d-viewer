@@ -1,7 +1,7 @@
 #include "window.hpp"
 
-MyWindow::MyWindow(const std::string &title, int width, int height)
-    : window(nullptr), context(nullptr), width(width), height(height), title(title), initialized(false) {}
+MyWindow::MyWindow(const std::string &title, int width, int height, glm::vec4 clearColor)
+    : window(nullptr), context(nullptr), width(width), height(height), title(title), initialized(false), clearColor(clearColor) {}
 
 MyWindow::~MyWindow()
 {
@@ -16,6 +16,11 @@ MyWindow::~MyWindow()
         window = nullptr;
     }
     SDL_Quit();
+}
+
+void MyWindow::setClearColor()
+{
+    glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 }
 
 int MyWindow::getWidth() const
