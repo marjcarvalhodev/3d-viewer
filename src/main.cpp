@@ -12,7 +12,7 @@
 
 void render(MyWindow &window, MyCamera &camera, MyShader &shader, std::vector<MyMesh> &meshes);
 MyCamera getDefaultCamera(const MyWindow &window);
-void updateLogic(MyCamera &camera, float accumulatedTime);
+void updateLogic(MyCamera &camera, float deltaTime);
 void windowResize(SDL_Event &event, MyCamera &camera);
 
 int main()
@@ -27,15 +27,17 @@ int main()
             return 1;
         }
 
-        AssetsManager asmn;
+        AssetsManager asmn("assets");
         std::string vertexShaderSource = asmn.readFile("basic_shader.vert");
         std::string fragmentShaderSource = asmn.readFile("basic_shader.frag");
 
-        MyShader shader({vertexShaderSource, fragmentShaderSource});
+        ShaderSources sources = {vertexShaderSource, fragmentShaderSource};
 
-        float tz = -1.0f;
+        MyShader shader(sources);
+
+        float tz = 0.0f;
         std::vector<float> vertices = {
-            0.0f, 0.5f, tz, // Push triangle back
+            0.0f, 0.5f, tz,
             -0.5f, -0.5f, tz,
             0.5f, -0.5f, tz};
 
@@ -50,7 +52,6 @@ int main()
 
         float lastUpdateTime = SDL_GetTicks();
         float accumulatedTime = 0.0f;
-        float frames = 0.0f;
 
         while (running)
         {
@@ -67,8 +68,8 @@ int main()
                     running = false;
                 }
 
-                static Uint32 lastResizeTime = 0;  // Time of the last resize event
-                const Uint32 resizeThrottle = 100; // Minimum time between updates (in ms)
+                static Uint32 lastResizeTime = 0;
+                const Uint32 resizeThrottle = 100;
 
                 if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
                 {
@@ -88,19 +89,20 @@ int main()
 
             while (accumulatedTime >= MS_PER_TICK)
             {
-                // updateLogic(camera, accumulatedTime);
+                // updateLogic(camera, deltaTime);
                 accumulatedTime -= MS_PER_TICK;
-
-                // const glm::mat4 vMat = camera.getViewMatrix();
-                // print("View Matrix:\n", glm::to_string(vMat));
             }
 
+            const float maxFPS = 60.0f;
+            const float frameDelay = 1000.0f / maxFPS;
+
+            float frameStart = SDL_GetTicks();
             render(window, camera, shader, meshes);
-            for (size_t i = 0; i < vertices.size(); i += 3)
+            float frameTime = SDL_GetTicks() - frameStart;
+
+            if (frameTime < frameDelay)
             {
-                glm::vec4 worldPos(vertices[i], vertices[i + 1], vertices[i + 2], 1.0f);
-                glm::vec4 clipPos = camera.getProjectionMatrix() * camera.getViewMatrix() * worldPos;
-                print("World Pos: ", glm::to_string(worldPos), " -> Clip Pos: ", glm::to_string(clipPos));
+                SDL_Delay((frameDelay - frameTime));
             }
         }
 
@@ -138,22 +140,45 @@ MyCamera getDefaultCamera(const MyWindow &window)
     float aspectRatio = static_cast<float>(window.getWidth()) / window.getHeight();
 
     MyCamera camera(position, target, upDir, aspectRatio);
-
-    std::cout << "Projection Matrix:\n"
-              << glm::to_string(camera.getProjectionMatrix()) << std::endl;
-
     return camera;
 }
 
-void updateLogic(MyCamera &camera, float accumulatedTime)
+void updateLogic(MyCamera &camera, float deltaTime)
 {
-    float angle = glm::radians(fmod(accumulatedTime * 50.0f, 360.0f));
-    // print(angle);
-    // glm::vec3 target = glm::vec3(sin(angle), cos(angle), 0.0f);
-    // camera.setTarget(target);
+    static float accumulatedLogicTime = 0.0f;
+    accumulatedLogicTime += deltaTime;
 
-    glm::vec3 newPos = glm::vec3(sin(angle) * 30.0f, cos(angle) * 30.0f, 3.0f);
-    camera.setPosition(newPos);
+    float radius = 3.0f;
+    float angle = glm::radians(fmod(accumulatedLogicTime * 30.0f, 360.0f));
+    glm::vec3 newPos = glm::vec3(sin(angle) * radius, 1.0f, cos(angle) * radius);
+
+    static glm::vec3 lastPos = camera.getPosition();
+
+    float logicTimeStep = 1000.0f / 30.0f;
+    float alpha = deltaTime / logicTimeStep;
+    alpha = glm::clamp(alpha, 0.0f, 1.0f);
+
+    glm::vec3 interpolatedPos = interpolate(lastPos, newPos, alpha);
+
+    static float logTimer = 0.0f;
+    logTimer += deltaTime;
+
+    if (logTimer >= 1000.0f)
+    {
+        print("New Pos: ", newPos.x, ", ", newPos.y, ", ", newPos.z);
+        print("Interpolated Pos: ", interpolatedPos.x, ", ", interpolatedPos.y, ", ", interpolatedPos.z);
+        print("Alpha: ", alpha);
+        print("New Pos Radius: ", glm::length(newPos));
+
+        logTimer = 0.0f;
+    }
+
+    camera.setPosition(interpolatedPos);
+
+    if (glm::distance(interpolatedPos, newPos) < 0.01f)
+    {
+        lastPos = newPos;
+    }
 }
 
 void windowResize(SDL_Event &event, MyCamera &camera)

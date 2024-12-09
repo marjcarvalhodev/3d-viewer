@@ -7,6 +7,8 @@ MyShader::MyShader(ShaderSources sources)
 
     vertexShader = compileShader(sources.vertex.c_str(), ShaderType::Vertex);
     fragmentShader = compileShader(sources.fragment.c_str(), ShaderType::Fragment);
+    
+    bindShaders();
 }
 
 MyShader::~MyShader()
@@ -94,8 +96,7 @@ void MyShader::validateShader(std::string vertexShaderSource, std::string fragme
     {
         throw std::runtime_error("Vertex shader source does not contain #version directive.");
     }
-    std::cout << "Vertex Shader Source:\n"
-              << vertexShaderSource << std::endl;
+    // print("Vertex Shader Source:\n", vertexShaderSource);
 
     if (fragmentShaderSource.empty())
     {
@@ -105,6 +106,5 @@ void MyShader::validateShader(std::string vertexShaderSource, std::string fragme
     {
         throw std::runtime_error("Fragment shader source does not contain #version directive.");
     }
-    std::cout << "Fragment Shader Source:\n"
-              << fragmentShaderSource << std::endl;
+    // print("Fragment Shader Source:\n", fragmentShaderSource);
 }

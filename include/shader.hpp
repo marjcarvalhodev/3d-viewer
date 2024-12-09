@@ -1,6 +1,7 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
 
+#include "utils.hpp"
 #include <iostream>
 #include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
