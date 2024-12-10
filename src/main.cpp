@@ -6,6 +6,7 @@
 #include "shader.hpp"
 #include "mesh.hpp"
 #include "camera.hpp"
+#include "tiny_obj_loader.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -14,6 +15,7 @@ void render(MyWindow &window, MyCamera &camera, MyShader &shader, std::vector<My
 MyCamera getDefaultCamera(const MyWindow &window);
 void updateLogic(MyCamera &camera, float deltaTime);
 void windowResize(SDL_Event &event, MyCamera &camera);
+std::vector<float> loadModel(const std::string &objPath);
 
 int main()
 {
@@ -28,8 +30,8 @@ int main()
         }
 
         AssetsManager asmn("assets");
-        std::string vertexShaderSource = asmn.readFile("basic_shader.vert");
-        std::string fragmentShaderSource = asmn.readFile("basic_shader.frag");
+        std::string vertexShaderSource = asmn.readFile("shaders/phong/vertex.glsl");
+        std::string fragmentShaderSource = asmn.readFile("shaders/phong/fragment.glsl");
 
         ShaderSources sources = {vertexShaderSource, fragmentShaderSource};
 
@@ -40,6 +42,22 @@ int main()
             0.0f, 0.5f, tz,
             -0.5f, -0.5f, tz,
             0.5f, -0.5f, tz};
+
+        std::string tubeModelSource = asmn.readFile("models/tube/tube.obj");
+        print(tubeModelSource);
+
+        // try
+        // {
+        //     std::vector<float> vertices_3D = loadModel(tubeModelSource);
+
+        //     MyMesh mesh(vertices_3D);
+        //     meshes.push_back(mesh);
+        // }
+        // catch (const std::exception &e)
+        // {
+        //     printErr(e);
+        //     return 1;
+        // }
 
         MyMesh mesh(vertices);
         meshes.push_back(mesh);
@@ -120,10 +138,10 @@ void render(MyWindow &window, MyCamera &camera, MyShader &shader, std::vector<My
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     shader.use();
-    shader.updateShader(camera.getViewMatrix(), camera.getProjectionMatrix());
 
     for (auto &mesh : meshes)
     {
+        shader.updateShader(mesh.getModelMatrix(), camera.getViewMatrix(), camera.getProjectionMatrix());
         mesh.bind();
         glDrawArrays(GL_TRIANGLES, 0, mesh.getVertexCount());
         mesh.unbind();
@@ -191,3 +209,48 @@ void windowResize(SDL_Event &event, MyCamera &camera)
     camera.setAspectRatio(static_cast<float>(newWidth) / newHeight);
     camera.updateProjectionMatrix();
 }
+
+// std::vector<float> loadModel(const std::string &objPath)
+// {
+//     tinyobj::attrib_t attrib;
+//     std::vector<tinyobj::shape_t> shapes;
+//     std::vector<tinyobj::material_t> materials;
+//     std::string warn;
+//     std::string err;
+
+//     print(objPath);
+
+//     bool success = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, objPath.c_str());
+
+//     if (!success)
+//     {
+//         throw std::runtime_error("Failed to load OBJ file: " + objPath + "\n" + err);
+//     }
+
+//     if (!warn.empty())
+//     {
+//         std::cerr << "TinyObjLoader Warning: " << warn << std::endl;
+//     }
+
+//     std::cout << "Loaded OBJ with " << attrib.vertices.size() / 3 << " vertices." << std::endl;
+
+//     std::vector<float> vertices;
+
+//     for (const auto &shape : shapes)
+//     {
+//         for (const auto &index : shape.mesh.indices)
+//         {
+//             float vx = attrib.vertices[3 * index.vertex_index + 0];
+//             float vy = attrib.vertices[3 * index.vertex_index + 1];
+//             float vz = attrib.vertices[3 * index.vertex_index + 2];
+
+//             vertices.push_back(vx);
+//             vertices.push_back(vy);
+//             vertices.push_back(vz);
+//         }
+//     }
+
+//     return vertices;
+// }
+
+// eof

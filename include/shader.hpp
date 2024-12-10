@@ -35,7 +35,7 @@ public:
     void use();
 
     GLuint getProgramID() const;
-    void updateShader(const glm::mat4 viewMat, const glm::mat4 projMat);
+    void updateShader(const glm::mat4 modelMat, const glm::mat4 viewMat, const glm::mat4 projMat);
 };
 
 #endif

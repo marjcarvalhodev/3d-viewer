@@ -77,8 +77,11 @@ GLuint MyShader::getProgramID() const
     return shaderProgram;
 }
 
-void MyShader::updateShader(const glm::mat4 viewMat, const glm::mat4 projMat)
+void MyShader::updateShader(const glm::mat4 modelMat, const glm::mat4 viewMat, const glm::mat4 projMat)
 {
+    GLuint modelLoc = glGetUniformLocation(getProgramID(), "uModel");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMat));
+
     GLuint viewLoc = glGetUniformLocation(getProgramID(), "uView");
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMat));
 
