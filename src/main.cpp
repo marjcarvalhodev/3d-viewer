@@ -15,7 +15,7 @@ void render(MyWindow &window, MyCamera &camera, MyShader &shader, std::vector<My
 MyCamera getDefaultCamera(const MyWindow &window);
 void updateLogic(MyCamera &camera, float deltaTime);
 void windowResize(SDL_Event &event, MyCamera &camera);
-std::vector<float> loadModel(const std::string &objPath);
+// std::vector<float> loadModel(const std::string &objPath);
 
 int main()
 {
@@ -44,7 +44,6 @@ int main()
             0.5f, -0.5f, tz};
 
         std::string tubeModelSource = asmn.readFile("models/tube/tube.obj");
-        print(tubeModelSource);
 
         // try
         // {
