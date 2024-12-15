@@ -2,10 +2,10 @@
 #include "utils.hpp"
 #include <SDL2/SDL.h>
 #include "window.hpp"
+#include "camera.hpp"
 #include "assets_manager.hpp"
 #include "shader.hpp"
 #include "mesh.hpp"
-#include "camera.hpp"
 #include "mesh_loader.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -28,20 +28,18 @@ int main()
             return 1;
         }
 
-        AssetsManager asmn("assets");
-        std::string vertexShaderSource = asmn.readFile("shaders/phong/vertex.glsl");
-        std::string fragmentShaderSource = asmn.readFile("shaders/phong/fragment.glsl");
-        std::string ballModelSource = asmn.readFile("models/ball/ball.obj");
-        std::string diamondModelSource = asmn.readFile("models/diamond/diamond.obj");
+        AssetsManager assetsManager("assets");
 
-        ShaderSources sources = {vertexShaderSource, fragmentShaderSource};
-        MyShader shader(sources);
+        assetsManager.loadModel("ballModel", "ball");
+        assetsManager.loadModel("diamondModel", "diamond");
+        assetsManager.loadShader("phongShader", "phong");
 
-        MyMesh ballMesh(MeshLoader::loadModel(ballModelSource));
-        MyMesh diamondMesh(MeshLoader::loadModel(ballModelSource));
+        std::shared_ptr<MyMesh> ballMesh = assetsManager.getModel("ballModel");
+        std::shared_ptr<MyMesh> diamondMesh = assetsManager.getModel("diamondModel");
+        std::shared_ptr<MyShader> shader = assetsManager.getShader("phongShader");
 
-        meshes.push_back(ballMesh);
-        meshes.push_back(diamondMesh);
+        meshes.push_back(*ballMesh);
+        meshes.push_back(*diamondMesh);
 
         MyCamera camera = getDefaultCamera(window);
 
@@ -95,7 +93,7 @@ int main()
             const float frameDelay = 1000.0f / maxFPS;
 
             float frameStart = SDL_GetTicks();
-            // render(window, camera, shader, meshes);
+            render(window, camera, *shader, meshes);
             float frameTime = SDL_GetTicks() - frameStart;
 
             if (frameTime < frameDelay)
@@ -121,7 +119,7 @@ void render(MyWindow &window, MyCamera &camera, MyShader &shader, std::vector<My
 
     for (auto &mesh : meshes)
     {
-        shader.updateShader(mesh.getModelMatrix(), camera.getViewMatrix(), camera.getProjectionMatrix());
+        shader.updateShader(mesh.getModelMatrix(), camera.getViewMatrix(), camera.getProjectionMatrix(), {0.0, 0.0, 5.0});
         mesh.bind();
         glDrawArrays(GL_TRIANGLES, 0, mesh.getVertexCount());
         mesh.unbind();
@@ -132,7 +130,7 @@ void render(MyWindow &window, MyCamera &camera, MyShader &shader, std::vector<My
 
 MyCamera getDefaultCamera(const MyWindow &window)
 {
-    glm::vec3 position = {0.0, 0.0, 3.0};
+    glm::vec3 position = {0.0, 6.0, 15.0};
     glm::vec3 target = {0.0, 0.0, 0.0};
     glm::vec3 upDir = {0.0, 1.0, 0.0};
     float aspectRatio = static_cast<float>(window.getWidth()) / window.getHeight();

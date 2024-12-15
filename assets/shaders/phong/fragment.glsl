@@ -1,5 +1,7 @@
 #version 330 core
 
+uniform vec3 lightPos;
+
 in vec3 FragPos; // From vertex shader
 in vec3 Normal;  // From vertex shader
 
@@ -7,7 +9,6 @@ out vec4 FragColor;
 
 // Hardcoded lighting
 void main() {
-    vec3 lightPos = vec3(0.0, 0.3, 0.3);  // Light in front of the triangle
     vec3 viewPos = vec3(0.0, 0.0, 5.0);   // Camera position
     vec3 lightColor = vec3(1.0, 1.0, 1.0);
     vec3 objectColor = vec3(0.2, 0.5, 0.8);

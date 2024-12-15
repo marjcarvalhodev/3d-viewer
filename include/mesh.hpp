@@ -8,6 +8,11 @@
 #include <vector>
 #include "mesh_loader.hpp"
 
+struct Material {
+    glm::vec3 color;
+    float shininess; // For shiny/rough differentiation
+};
+
 class MyMesh
 {
 private:

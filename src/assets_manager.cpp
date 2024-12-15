@@ -1,4 +1,4 @@
-#include "assets_mngr.hpp"
+#include "assets_manager.hpp"
 
 namespace fs = std::filesystem;
 
@@ -34,3 +34,20 @@ std::string AssetsManager::readFile(const std::string &fileName) const
 
     return buffer.str();
 }
+
+void AssetsManager::loadModel(const std::string &key, const std::string &modelName)
+{
+    std::string path = basePath + "/models/" + modelName + "/" + modelName + ".obj";
+    models[key] = std::make_shared<MyMesh>(MyMesh(MeshLoader::loadModel(path)));
+}
+
+void AssetsManager::loadShader(const std::string &key, const std::string &shaderName)
+{
+    std::string vertexShaderSource = readFile("shaders/" + shaderName + "/vertex.glsl");
+    std::string fragmentShaderSource = readFile("shaders/" + shaderName + "/fragment.glsl");
+
+    ShaderSources sources = {vertexShaderSource, fragmentShaderSource};
+    shaders[key] = std::make_shared<MyShader>(sources);
+}
+
+// eof
