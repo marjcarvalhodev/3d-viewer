@@ -1,7 +1,9 @@
 #include "mesh.hpp"
 
-MyMesh::MyMesh(const std::vector<float> &vertices) : vertexCount(vertices.size() / 3)
+MyMesh::MyMesh(MeshData meshData) : vertexCount(meshData.vertices.size() / 3)
 {
+    std::vector<float> vertices = meshData.vertices;
+
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
@@ -11,6 +13,32 @@ MyMesh::MyMesh(const std::vector<float> &vertices) : vertexCount(vertices.size()
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
+
+    // Create and bind normals buffer (if provided)
+    if (!meshData.normals.empty())
+    {
+        std::vector<float> normals = meshData.normals;
+
+        GLuint normalVBO;
+        glGenBuffers(1, &normalVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
+        glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), normals.data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+        glEnableVertexAttribArray(1);
+    }
+
+    // Create and bind texture coordinates buffer (if provided)
+    if (!meshData.texCoords.empty())
+    {
+        std::vector<float> texCoords = meshData.texCoords;
+
+        GLuint texCoordVBO;
+        glGenBuffers(1, &texCoordVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, texCoordVBO);
+        glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(float), texCoords.data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
+        glEnableVertexAttribArray(2);
+    }
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -45,3 +73,5 @@ void MyMesh::setModelMatrix(const glm::mat4 &matrix)
 {
     modelMatrix = matrix;
 }
+
+//

@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <iostream>
 #include <vector>
+#include "mesh_loader.hpp"
 
 class MyMesh
 {
@@ -15,7 +16,7 @@ private:
     glm::mat4 modelMatrix = glm::mat4(1.0f); // Identity matrix by default
 
 public:
-    MyMesh(const std::vector<float> &vertices);
+    MyMesh(MeshData meshData);
     ~MyMesh();
 
     void bind() const;
