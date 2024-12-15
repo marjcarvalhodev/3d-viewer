@@ -7,13 +7,13 @@
 #include "shader.hpp"
 #include "mesh.hpp"
 #include "mesh_loader.hpp"
+#include "object.hpp"
+#include "scene.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-void render(MyWindow &window, MyCamera &camera, MyShader &shader, std::vector<MyMesh> &meshes);
 MyCamera getDefaultCamera(const MyWindow &window);
-void updateLogic(MyCamera &camera, float deltaTime);
 void windowResize(SDL_Event &event, MyCamera &camera);
 
 int main()
@@ -27,6 +27,9 @@ int main()
         {
             return 1;
         }
+        MyCamera camera = getDefaultCamera(window);
+        SDL_Event event;
+        bool running = true;
 
         AssetsManager assetsManager("assets");
 
@@ -36,70 +39,29 @@ int main()
 
         std::shared_ptr<MyMesh> ballMesh = assetsManager.getModel("ballModel");
         std::shared_ptr<MyMesh> diamondMesh = assetsManager.getModel("diamondModel");
-        std::shared_ptr<MyShader> shader = assetsManager.getShader("phongShader");
+        std::shared_ptr<MyShader> phong_shader = assetsManager.getShader("phongShader");
 
-        meshes.push_back(*ballMesh);
-        meshes.push_back(*diamondMesh);
+        Material mat = {{0.5, 0.3, 0.36}, 50.0};
 
-        MyCamera camera = getDefaultCamera(window);
+        std::shared_ptr<Object> shiny_ball = std::make_shared<Object>(ballMesh, mat, phong_shader);
+        std::shared_ptr<Object> shiny_diamond = std::make_shared<Object>(diamondMesh, mat, phong_shader);
 
-        SDL_Event event;
-
-        bool running = true;
-
-        float lastUpdateTime = SDL_GetTicks();
-        float accumulatedTime = 0.0f;
+        Scene main_scene(camera);
+        main_scene.addSceneObjects("shiny_ball", shiny_ball);
+        main_scene.addSceneObjects("shiny_ball", shiny_diamond);
 
         while (running)
         {
-            float currentTime = SDL_GetTicks();
-            float deltaTime = currentTime - lastUpdateTime;
-            lastUpdateTime = currentTime;
-
-            accumulatedTime += deltaTime;
-
+            SDL_Event event;
             while (SDL_PollEvent(&event))
             {
                 if (event.type == SDL_QUIT)
                 {
                     running = false;
                 }
-
-                static Uint32 lastResizeTime = 0;
-                const Uint32 resizeThrottle = 100;
-
-                if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
-                {
-                    SDL_Event skipEvent;
-                    while (SDL_PeepEvents(&skipEvent, 1, SDL_GETEVENT, SDL_WINDOWEVENT, SDL_WINDOWEVENT) > 0)
-                    {
-                        if (skipEvent.window.event == SDL_WINDOWEVENT_RESIZED)
-                            continue;
-                    }
-
-                    if (currentTime - lastResizeTime > resizeThrottle)
-                    {
-                        windowResize(event, camera);
-                    }
-                }
             }
 
-            while (accumulatedTime >= MS_PER_TICK)
-            {
-                accumulatedTime -= MS_PER_TICK;
-            }
-
-            const float maxFPS = 60.0f;
-            const float frameDelay = 1000.0f / maxFPS;
-
-            float frameStart = SDL_GetTicks();
-            render(window, camera, *shader, meshes);
-            float frameTime = SDL_GetTicks() - frameStart;
-
-            if (frameTime < frameDelay)
-            {
-                SDL_Delay((frameDelay - frameTime));
-            }
+            main_scene.renderScene(window);
         }
 
         return 0;
@@ -111,23 +73,6 @@ int main()
     }
 }
 
-void render(MyWindow &window, MyCamera &camera, MyShader &shader, std::vector<MyMesh> &meshes)
-{
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    shader.use();
-
-    for (auto &mesh : meshes)
-    {
-        shader.updateShader(mesh.getModelMatrix(), camera.getViewMatrix(), camera.getProjectionMatrix(), {0.0, 0.0, 5.0});
-        mesh.bind();
-        glDrawArrays(GL_TRIANGLES, 0, mesh.getVertexCount());
-        mesh.unbind();
-    }
-
-    window.swapBuffers();
-}
-
 MyCamera getDefaultCamera(const MyWindow &window)
 {
     glm::vec3 position = {0.0, 6.0, 15.0};
@@ -137,44 +82,6 @@ MyCamera getDefaultCamera(const MyWindow &window)
 
     MyCamera camera(position, target, upDir, aspectRatio);
     return camera;
-}
-
-void updateLogic(MyCamera &camera, float deltaTime)
-{
-    static float accumulatedLogicTime = 0.0f;
-    accumulatedLogicTime += deltaTime;
-
-    float radius = 3.0f;
-    float angle = glm::radians(fmod(accumulatedLogicTime * 30.0f, 360.0f));
-    glm::vec3 newPos = glm::vec3(sin(angle) * radius, 1.0f, cos(angle) * radius);
-
-    static glm::vec3 lastPos = camera.getPosition();
-
-    float logicTimeStep = 1000.0f / 30.0f;
-    float alpha = deltaTime / logicTimeStep;
-    alpha = glm::clamp(alpha, 0.0f, 1.0f);
-
-    glm::vec3 interpolatedPos = interpolate(lastPos, newPos, alpha);
-
-    static float logTimer = 0.0f;
-    logTimer += deltaTime;
-
-    if (logTimer >= 1000.0f)
-    {
-        print("New Pos: ", newPos.x, ", ", newPos.y, ", ", newPos.z);
-        print("Interpolated Pos: ", interpolatedPos.x, ", ", interpolatedPos.y, ", ", interpolatedPos.z);
-        print("Alpha: ", alpha);
-        print("New Pos Radius: ", glm::length(newPos));
-
-        logTimer = 0.0f;
-    }
-
-    camera.setPosition(interpolatedPos);
-
-    if (glm::distance(interpolatedPos, newPos) < 0.01f)
-    {
-        lastPos = newPos;
-    }
 }
 
 void windowResize(SDL_Event &event, MyCamera &camera)

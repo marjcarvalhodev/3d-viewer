@@ -86,6 +86,11 @@ bool MyWindow::init()
     return true;
 }
 
+void MyWindow::clearBuffers()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
 void MyWindow::swapBuffers()
 {
     if (initialized)
@@ -121,3 +126,5 @@ void MyWindow::cleanUp()
     }
     SDL_Quit();
 }
+
+// eof

@@ -26,6 +26,8 @@ public:
 
     void setClearColor();
 
+    void clearBuffers();
+
     void swapBuffers();
 
     bool shouldClose();
@@ -33,6 +35,7 @@ public:
     void cleanUp();
 
     int getWidth() const;
+
     int getHeight() const;
 };
 
