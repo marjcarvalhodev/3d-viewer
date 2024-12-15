@@ -15,6 +15,9 @@ include_directories(include)
 # Source files
 file(GLOB SOURCES "src/*.cpp")
 
+# Add TinyObjLoader implementation file
+list(APPEND SOURCES "${CMAKE_SOURCE_DIR}/src/tiny_obj_loader.cc")
+
 # Executable
 add_executable(${PROJECT_NAME} ${SOURCES})
 
