@@ -16,9 +16,11 @@ MeshData MeshLoader::loadModel(const std::string &objPath)
         }
         if (!reader.Error().empty())
         {
-            throw std::runtime_error("Error: " + reader.Error());
+            std::cerr << "Error: " << reader.Error() << std::endl;
+            return {}; // Return an empty MeshData
         }
-        throw std::runtime_error("Failed to load .obj file.");
+        std::cerr << "Failed to load .obj file." << std::endl;
+        return {};
     }
 
     const auto &attrib = reader.GetAttrib();

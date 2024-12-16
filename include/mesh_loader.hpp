@@ -12,9 +12,15 @@ struct MeshData
     std::vector<float> vertices;
     std::vector<float> normals;
     std::vector<float> texCoords;
+
+    bool isEmpty() const
+    {
+        return vertices.empty() && normals.empty() && texCoords.empty();
+    }
 };
 
-class MeshLoader {
+class MeshLoader
+{
 public:
     static MeshData loadModel(const std::string &objPath);
 };

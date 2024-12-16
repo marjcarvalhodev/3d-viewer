@@ -1,6 +1,7 @@
 #ifndef ASSETS_MANAGER_HPP
 #define ASSETS_MANAGER_HPP
 
+#include <sstream>
 #include <fstream>
 #include <filesystem>
 #include <iostream>
@@ -19,8 +20,8 @@ private:
     std::unordered_map<std::string, Material> materials;
 
 public:
-    AssetsManager(const std::string &basePath = "assets");
-    
+    explicit AssetsManager(const std::string &basePath);
+
     ~AssetsManager();
 
     std::string readFile(const std::string &fileName) const;

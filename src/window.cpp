@@ -41,6 +41,16 @@ bool MyWindow::init()
         return false;
     }
 
+#ifdef __EMSCRIPTEN__
+    std::cout << "Requesting WebGL context..." << std::endl;
+// Avoid explicit attribute settings; rely on Emscripten defaults.
+#else
+    // Native setup can have explicit attribute settings.
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+#endif
+
     // Create SDL window
     window = SDL_CreateWindow(
         title.c_str(),
@@ -66,7 +76,8 @@ bool MyWindow::init()
         return false;
     }
 
-    // Initialize GLEW or other extensions
+#ifndef __EMSCRIPTEN__
+    // Initialize GLEW or other extensions for native builds
     glewExperimental = GL_TRUE;
     GLenum glewInitResult = glewInit();
     if (glewInitResult != GLEW_OK)
@@ -74,11 +85,13 @@ bool MyWindow::init()
         std::cerr << "Failed to initialize GLEW: " << glewGetErrorString(glewInitResult) << std::endl;
         return false;
     }
+#endif
 
+    // Set OpenGL state
     glViewport(0, 0, getWidth(), getHeight());
     setClearColor();
     glEnable(GL_DEPTH_TEST);
-    
+
     initialized = true;
     return true;
 }
