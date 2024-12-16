@@ -1,6 +1,7 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
 
+#include "utils.hpp"
 #include <iostream>
 #include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
@@ -34,7 +35,9 @@ public:
     void use();
 
     GLuint getProgramID() const;
-    void updateShader(const glm::mat4 viewMat, const glm::mat4 projMat);
+    void updateShader(const glm::mat4 modelMat, const glm::mat4 viewMat, const glm::mat4 projMat, const glm::vec3 &light);
+    void setTexture(const std::string &name, GLuint textureID, int textureUnit);
+
 };
 
 #endif

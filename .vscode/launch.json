@@ -2,34 +2,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) Attach",
-            "type": "cppdbg",
-            "request": "attach",
-            "program": "enter program name, for example ${workspaceFolder}/a.out",
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Set Disassembly Flavor to Intel",
-                    "text": "-gdb-set disassembly-flavor intel",
-                    "ignoreFailures": true
-                }
-            ]
-        },
-        {
             "name": "Debug 3D-Viewer",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/3D-Viewer", // Path to your executable
-            "args": [],
+            "program": "${workspaceFolder}/build/3D-Viewer", // Path to the executable
+            "args": [], // Add arguments if necessary
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/build", // Set the working directory
             "environment": [],
-            "externalConsole": true,
+            "externalConsole": false, // Use VS Code integrated terminal
             "MIMode": "gdb",
             "setupCommands": [
                 {
@@ -37,7 +18,9 @@
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
                 }
-            ]
+            ],
+            "preLaunchTask": "Build 3D-Viewer", // Reference your task from tasks.json
+            "miDebuggerPath": "/usr/bin/gdb" // Path to gdb (adjust if necessary)
         }
     ]
 }

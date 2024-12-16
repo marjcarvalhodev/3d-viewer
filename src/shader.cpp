@@ -7,6 +7,8 @@ MyShader::MyShader(ShaderSources sources)
 
     vertexShader = compileShader(sources.vertex.c_str(), ShaderType::Vertex);
     fragmentShader = compileShader(sources.fragment.c_str(), ShaderType::Fragment);
+
+    bindShaders();
 }
 
 MyShader::~MyShader()
@@ -75,13 +77,23 @@ GLuint MyShader::getProgramID() const
     return shaderProgram;
 }
 
-void MyShader::updateShader(const glm::mat4 viewMat, const glm::mat4 projMat)
+void MyShader::updateShader(const glm::mat4 modelMat, const glm::mat4 viewMat, const glm::mat4 projMat, const glm::vec3 &light)
 {
+    GLuint modelLoc = glGetUniformLocation(getProgramID(), "uModel");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMat));
+
     GLuint viewLoc = glGetUniformLocation(getProgramID(), "uView");
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMat));
 
     GLuint projLoc = glGetUniformLocation(getProgramID(), "uProjection");
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projMat));
+
+    GLuint lightLoc = glGetUniformLocation(getProgramID(), "lightPos");
+    if (lightLoc == -1)
+    {
+        std::cerr << "Uniform 'lightPos' not found in the shader program!" << std::endl;
+    }
+    glUniform3fv(lightLoc, 1, glm::value_ptr(light));
 }
 
 void MyShader::validateShader(std::string vertexShaderSource, std::string fragmentShaderSource)
@@ -94,8 +106,7 @@ void MyShader::validateShader(std::string vertexShaderSource, std::string fragme
     {
         throw std::runtime_error("Vertex shader source does not contain #version directive.");
     }
-    std::cout << "Vertex Shader Source:\n"
-              << vertexShaderSource << std::endl;
+    // print("Vertex Shader Source:\n", vertexShaderSource);
 
     if (fragmentShaderSource.empty())
     {
@@ -105,6 +116,15 @@ void MyShader::validateShader(std::string vertexShaderSource, std::string fragme
     {
         throw std::runtime_error("Fragment shader source does not contain #version directive.");
     }
-    std::cout << "Fragment Shader Source:\n"
-              << fragmentShaderSource << std::endl;
+    // print("Fragment Shader Source:\n", fragmentShaderSource);
 }
+
+void MyShader::setTexture(const std::string &name, GLuint textureID, int textureUnit)
+{
+    glActiveTexture(GL_TEXTURE0 + textureUnit);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    GLuint textureLoc = glGetUniformLocation(getProgramID(), "textureLoc");
+    glUniform1i(textureLoc, textureUnit);
+}
+
+// eof

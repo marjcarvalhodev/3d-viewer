@@ -26,3 +26,21 @@ const glm::mat4 &MyCamera::getProjectionMatrix() const
 {
     return projectionMatrix;
 }
+
+void MyCamera::setPosition(const glm::vec3& newValue)
+{
+    position = newValue;
+    updateViewMatrix();
+}
+
+void MyCamera::setTarget(const glm::vec3& newValue)
+{
+    target = newValue;
+    updateViewMatrix();
+}
+
+void MyCamera::setAspectRatio(float newValue)
+{
+    aspectRatio = newValue;
+    updateProjectionMatrix();
+}

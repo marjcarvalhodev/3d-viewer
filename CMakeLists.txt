@@ -9,9 +9,6 @@ project(${PROJECT_NAME})
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Compile with Clang if desired
-# set(CMAKE_CXX_COMPILER "clang++")
-
 # Include directories
 include_directories(include)
 
@@ -45,3 +42,14 @@ target_link_libraries(${PROJECT_NAME}
 if(UNIX)
     target_link_libraries(${PROJECT_NAME} pthread)
 endif()
+
+# Enforce build type and default build type
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose build type" FORCE)
+endif()
+message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
+
+# Output messages
+message(STATUS "Project: ${PROJECT_NAME}")
+message(STATUS "Source Directory: ${CMAKE_SOURCE_DIR}")
+message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
