@@ -6,20 +6,18 @@
 #include "assets_manager.hpp"
 #include "shader.hpp"
 #include "mesh.hpp"
-#include "mesh_loader.hpp"
 #include "object.hpp"
 #include "scene.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-MyCamera getDefaultCamera(const MyWindow &window);
 void windowResize(SDL_Event &event, MyCamera &camera);
+MyCamera getDefaultCamera(const MyWindow &window);
+void handleInput(SDL_Event &event, bool &running);
 
 int main()
 {
-    std::vector<MyMesh> meshes;
-
     try
     {
         MyWindow window("3D-Viewer", DEFAULT_WIN_WIDTH, DEFAULT_WIN_HEIGHT, NIGHT_CLEAR_COLOR);
@@ -43,22 +41,37 @@ int main()
 
         Material mat = {{0.5, 0.3, 0.36}, 50.0};
 
-        std::shared_ptr<Object> shiny_ball = std::make_shared<Object>(ballMesh, mat, phong_shader);
-        std::shared_ptr<Object> shiny_diamond = std::make_shared<Object>(diamondMesh, mat, phong_shader);
+        std::shared_ptr<MyObject> shiny_ball_1 = std::make_shared<MyObject>(ballMesh, mat, phong_shader);
+        std::shared_ptr<MyObject> shiny_ball_2 = std::make_shared<MyObject>(ballMesh, mat, phong_shader);
 
-        Scene main_scene(camera);
-        main_scene.addSceneObjects("shiny_ball", shiny_ball);
-        main_scene.addSceneObjects("shiny_ball", shiny_diamond);
+        std::shared_ptr<MyObject> shiny_diamond_1 = std::make_shared<MyObject>(diamondMesh, mat, phong_shader);
+        std::shared_ptr<MyObject> shiny_diamond_2 = std::make_shared<MyObject>(diamondMesh, mat, phong_shader);
+
+        MyScene main_scene(camera);
+
+        shiny_ball_1->repositionObject({-2.0, 0.0, 2.0});
+        shiny_ball_2->repositionObject({-2.0, 0.0, -2.0});
+        shiny_diamond_1->repositionObject({2.0, 0.0, 2.0});
+        shiny_diamond_2->repositionObject({2.0, 0.0, -2.0});
+
+        main_scene.addSceneObjects("shiny_ball_1", shiny_ball_1);
+        main_scene.addSceneObjects("shiny_ball_2", shiny_ball_2);
+        main_scene.addSceneObjects("shiny_diamond_1", shiny_diamond_1);
+        main_scene.addSceneObjects("shiny_diamond_2", shiny_diamond_2);
+
+        float lastTime = SDL_GetTicks() / 1000.0f; // Initialize lastTime in seconds
 
         while (running)
         {
-            SDL_Event event;
-            while (SDL_PollEvent(&event))
+            float currentTime = SDL_GetTicks() / 1000.0f; // Current time in seconds
+            float deltaTime = currentTime - lastTime;     // Time elapsed since last frame
+            lastTime = currentTime;
+
+            handleInput(event, running);
+
+            for (const auto &[key, object] : main_scene.getAllSceneObjects())
             {
-                if (event.type == SDL_QUIT)
-                {
-                    running = false;
-                }
+                main_scene.animateObject(object, deltaTime);
             }
 
             main_scene.renderScene(window);
@@ -75,7 +88,7 @@ int main()
 
 MyCamera getDefaultCamera(const MyWindow &window)
 {
-    glm::vec3 position = {0.0, 6.0, 15.0};
+    glm::vec3 position = {0.0, 10.0, 15.0};
     glm::vec3 target = {0.0, 0.0, 0.0};
     glm::vec3 upDir = {0.0, 1.0, 0.0};
     float aspectRatio = static_cast<float>(window.getWidth()) / window.getHeight();
@@ -93,6 +106,17 @@ void windowResize(SDL_Event &event, MyCamera &camera)
 
     camera.setAspectRatio(static_cast<float>(newWidth) / newHeight);
     camera.updateProjectionMatrix();
+}
+
+void handleInput(SDL_Event &event, bool &running)
+{
+    while (SDL_PollEvent(&event))
+    {
+        if (event.type == SDL_QUIT)
+        {
+            running = false;
+        }
+    }
 }
 
 // eof

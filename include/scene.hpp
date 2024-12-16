@@ -7,25 +7,32 @@
 #include <unordered_map>
 #include <string>
 
-class Scene
+class MyScene
 {
 private:
-    std::unordered_map<std::string, std::shared_ptr<Object>> scene_objects;
+    std::unordered_map<std::string, std::shared_ptr<MyObject>> scene_objects;
     MyCamera camera;
 
 public:
-    Scene(const MyCamera &camera) : camera(camera) {};
-    ~Scene();
+    MyScene(const MyCamera &camera);
+    ~MyScene();
 
-    void addSceneObjects(const std::string &key, const std::shared_ptr<Object> &object)
+    void addSceneObjects(const std::string &key, const std::shared_ptr<MyObject> &object)
     {
         scene_objects[key] = object;
     }
 
-    std::shared_ptr<Object> getSceneObject(const std::string &key) const
+    std::unordered_map<std::string, std::shared_ptr<MyObject>> getAllSceneObjects()
+    {
+        return scene_objects;
+    }
+
+    std::shared_ptr<MyObject> getSceneObject(const std::string &key) const
     {
         return scene_objects.at(key);
     }
+
+    void animateObject(std::shared_ptr<MyObject> object, float deltaTime);
 
     void renderScene(MyWindow &window) const;
 };

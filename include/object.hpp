@@ -5,7 +5,7 @@
 #include "shader.hpp"
 #include <memory>
 
-class Object
+class MyObject
 {
 private:
     std::shared_ptr<MyMesh> mesh;
@@ -14,14 +14,17 @@ private:
     glm::mat4 modelMatrix;
 
 public:
-    Object(std::shared_ptr<MyMesh> mesh, const Material &material, std::shared_ptr<MyShader> shader);
+    MyObject(std::shared_ptr<MyMesh> mesh, const Material &material, std::shared_ptr<MyShader> shader);
 
-    ~Object();
+    ~MyObject();
 
     void render(const glm::mat4 &view, const glm::mat4 &projection);
 
     void setModelMatrix(const glm::mat4 &matrix) { modelMatrix = matrix; }
 
+    void repositionObject(glm::vec3 newPosition);
+
+    void spin(glm::mat4 rotationMatrix) { setModelMatrix(rotationMatrix * modelMatrix); }
 };
 
 #endif
