@@ -63,13 +63,16 @@ fi
 if [ "$BUILD_WASM" = true ]; then
     echo "Building for WebAssembly..."
     cd "$BUILD_WASM_DIR"
-    emcmake cmake -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -CMakeLists-wasm.txt ..
+    emcmake cmake -DCMAKE_BUILD_TYPE="$BUILD_TYPE" ..
     emmake make
+
     echo "Copying WebAssembly build artifacts to docs directory..."
     mkdir -p "../$DOCS_DIR"
     cp *.data *.html *.js *.wasm "../$DOCS_DIR/"
-    echo "Copying assets directory to docs..."
-    cp -r ../assets "../$DOCS_DIR/"
+
+    # echo "Copying assets directory to docs..."
+    # cp -r ../assets "../$DOCS_DIR/"
+
     echo "WebAssembly build successful. Artifacts are in the '$DOCS_DIR' directory."
 else
     # Build for native

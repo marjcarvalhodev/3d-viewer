@@ -33,7 +33,7 @@ int main()
 
         assetsManager.loadModel("ballModel", "ball");
         assetsManager.loadModel("diamondModel", "diamond");
-        assetsManager.loadShader("phongShader", "phong");
+        assetsManager.loadShader("phongShader", "basic");
 
         std::shared_ptr<MyMesh> ballMesh = assetsManager.getModel("ballModel");
         std::shared_ptr<MyMesh> diamondMesh = assetsManager.getModel("diamondModel");
