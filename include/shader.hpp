@@ -27,7 +27,7 @@ private:
 
     bool bindShaders();
     void validateShader(std::string vertexShaderSource, std::string fragmentShaderSource);
-    
+
 public:
     MyShader(ShaderSources sources);
     ~MyShader();
@@ -35,9 +35,12 @@ public:
     void use();
 
     GLuint getProgramID() const;
-    void updateShader(const glm::mat4 modelMat, const glm::mat4 viewMat, const glm::mat4 projMat, const glm::vec3 &light);
-    void setTexture(const std::string &name, GLuint textureID, int textureUnit);
+    
+    void updateShader(
+        const glm::mat4 modelMat, const glm::mat4 viewMat,
+        const glm::mat4 projMat, const glm::vec3 &light, const glm::vec3 &cameraPos);
 
+    void setTexture(const std::string &name, GLuint textureID, int textureUnit);
 };
 
 #endif

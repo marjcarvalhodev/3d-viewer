@@ -1,7 +1,10 @@
 #include "object.hpp"
 
-MyObject::MyObject(std::shared_ptr<MyMesh> mesh, const Material &material, std::shared_ptr<MyShader> shader)
-    : mesh(mesh), material(material), shader(shader), modelMatrix(glm::mat4(1.0f))
+MyObject::MyObject(
+    std::shared_ptr<MyMesh> mesh, const Material &material,
+    std::shared_ptr<MyShader> shader, bool isTransparent)
+    : mesh(mesh), material(material), shader(shader),
+      modelMatrix(glm::mat4(1.0f)), isTransparent(isTransparent)
 {
 }
 
@@ -9,10 +12,10 @@ MyObject::~MyObject()
 {
 }
 
-void MyObject::render(const glm::mat4 &view, const glm::mat4 &projection)
+void MyObject::render(const glm::mat4 &view, const glm::mat4 &projection, const glm::vec3 &cameraPos)
 {
     shader->use();
-    shader->updateShader(modelMatrix, view, projection, glm::vec3(10.0));
+    shader->updateShader(modelMatrix, view, projection, glm::vec3(10.0), cameraPos);
 
     GLuint colorLoc = glGetUniformLocation(shader->getProgramID(), "materialColor");
     glUniform3fv(colorLoc, 1, glm::value_ptr(material.color));

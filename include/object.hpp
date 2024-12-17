@@ -14,13 +14,19 @@ private:
     glm::mat4 modelMatrix;
 
 public:
-    MyObject(std::shared_ptr<MyMesh> mesh, const Material &material, std::shared_ptr<MyShader> shader);
+    bool isTransparent;
+
+    MyObject(
+        std::shared_ptr<MyMesh> mesh, const Material &material,
+        std::shared_ptr<MyShader> shader, bool isTransparent = false);
 
     ~MyObject();
 
-    void render(const glm::mat4 &view, const glm::mat4 &projection);
+    void render(const glm::mat4 &view, const glm::mat4 &projection, const glm::vec3 &cameraPos);
 
     void setModelMatrix(const glm::mat4 &matrix) { modelMatrix = matrix; }
+
+    glm::vec3 getPosition() const { return modelMatrix[3]; }
 
     void repositionObject(glm::vec3 newPosition);
 

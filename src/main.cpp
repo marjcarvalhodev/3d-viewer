@@ -33,19 +33,21 @@ int main()
 
         assetsManager.loadModel("ballModel", "ball");
         assetsManager.loadModel("diamondModel", "diamond");
-        assetsManager.loadShader("phongShader", "basic");
+        assetsManager.loadShader("phongShader", "phong");
+        assetsManager.loadShader("glassShader", "glass");
 
         std::shared_ptr<MyMesh> ballMesh = assetsManager.getModel("ballModel");
         std::shared_ptr<MyMesh> diamondMesh = assetsManager.getModel("diamondModel");
         std::shared_ptr<MyShader> phong_shader = assetsManager.getShader("phongShader");
+        std::shared_ptr<MyShader> glass_shader = assetsManager.getShader("glassShader");
 
         Material mat = {{0.5, 0.3, 0.36}, 50.0};
 
         std::shared_ptr<MyObject> shiny_ball_1 = std::make_shared<MyObject>(ballMesh, mat, phong_shader);
         std::shared_ptr<MyObject> shiny_ball_2 = std::make_shared<MyObject>(ballMesh, mat, phong_shader);
 
-        std::shared_ptr<MyObject> shiny_diamond_1 = std::make_shared<MyObject>(diamondMesh, mat, phong_shader);
-        std::shared_ptr<MyObject> shiny_diamond_2 = std::make_shared<MyObject>(diamondMesh, mat, phong_shader);
+        std::shared_ptr<MyObject> shiny_diamond_1 = std::make_shared<MyObject>(diamondMesh, mat, glass_shader, true);
+        std::shared_ptr<MyObject> shiny_diamond_2 = std::make_shared<MyObject>(diamondMesh, mat, glass_shader, true);
 
         MyScene main_scene(camera);
 
