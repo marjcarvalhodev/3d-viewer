@@ -14,7 +14,7 @@ public:
     TextureLoader();
     ~TextureLoader();
 
-    GLuint loadTextureFromFile(const std::string &path);
+    static GLuint loadTextureFromFile(const std::string &textureName);
 
 };
 

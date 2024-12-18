@@ -32,19 +32,26 @@ int main()
         AssetsManager assetsManager("assets");
 
         assetsManager.loadModel("ballModel", "ball");
-        assetsManager.loadModel("diamondModel", "diamond");
-        assetsManager.loadShader("phongShader", "phong");
-        assetsManager.loadShader("glassShader", "glass");
-
         std::shared_ptr<MyMesh> ballMesh = assetsManager.getModel("ballModel");
+
+        assetsManager.loadModel("diamondModel", "diamond");
         std::shared_ptr<MyMesh> diamondMesh = assetsManager.getModel("diamondModel");
+
+        assetsManager.loadShader("basicShader", "basic");
+        std::shared_ptr<MyShader> basic_shader = assetsManager.getShader("basicShader");
+
+        assetsManager.loadShader("phongShader", "phong");
         std::shared_ptr<MyShader> phong_shader = assetsManager.getShader("phongShader");
+
+        assetsManager.loadShader("glassShader", "glass");
         std::shared_ptr<MyShader> glass_shader = assetsManager.getShader("glassShader");
+
+
 
         Material mat = {{0.5, 0.3, 0.36}, 50.0};
 
         std::shared_ptr<MyObject> shiny_ball_1 = std::make_shared<MyObject>(ballMesh, mat, phong_shader);
-        std::shared_ptr<MyObject> shiny_ball_2 = std::make_shared<MyObject>(ballMesh, mat, phong_shader);
+        std::shared_ptr<MyObject> wood_ball = std::make_shared<MyObject>(ballMesh, mat, basic_shader, false, "tree-bark.jpg");
 
         std::shared_ptr<MyObject> shiny_diamond_1 = std::make_shared<MyObject>(diamondMesh, mat, glass_shader, true);
         std::shared_ptr<MyObject> shiny_diamond_2 = std::make_shared<MyObject>(diamondMesh, mat, glass_shader, true);
@@ -52,12 +59,12 @@ int main()
         MyScene main_scene(camera);
 
         shiny_ball_1->repositionObject({-2.0, 0.0, 2.0});
-        shiny_ball_2->repositionObject({-2.0, 0.0, -2.0});
+        wood_ball->repositionObject({-2.0, 0.0, -2.0});
         shiny_diamond_1->repositionObject({2.0, 0.0, 2.0});
         shiny_diamond_2->repositionObject({2.0, 0.0, -2.0});
 
         main_scene.addSceneObjects("shiny_ball_1", shiny_ball_1);
-        main_scene.addSceneObjects("shiny_ball_2", shiny_ball_2);
+        main_scene.addSceneObjects("shiny_ball_2", wood_ball);
         main_scene.addSceneObjects("shiny_diamond_1", shiny_diamond_1);
         main_scene.addSceneObjects("shiny_diamond_2", shiny_diamond_2);
 
