@@ -1,12 +1,9 @@
-#version 300 es
-precision highp float;
+precision mediump float;
 
 uniform vec3 lightPos;
 
-in vec3 FragPos; // From vertex shader
-in vec3 Normal;  // From vertex shader
-
-out vec4 FragColor;
+varying vec3 FragPos; // From vertex shader
+varying vec3 Normal;  // From vertex shader
 
 void main() {
     vec3 viewPos = vec3(0.0, 0.0, 5.0);   // Camera position
@@ -33,5 +30,5 @@ void main() {
 
     // Combine results
     vec3 result = (ambient + diffuse + specular) * objectColor;
-    FragColor = vec4(result, 1.0);
+    gl_FragColor = vec4(result, 1.0);
 }

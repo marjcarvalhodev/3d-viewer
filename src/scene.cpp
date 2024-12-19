@@ -19,10 +19,46 @@ void MyScene::renderScene(MyWindow &window) const
 {
     window.clearBuffers();
 
+    // Step 1: Render opaque objects
     for (const auto &[key, object] : scene_objects)
     {
-        object->render(camera.getViewMatrix(), camera.getProjectionMatrix());
+        if (!object->isTransparent)
+        {
+            object->render(camera.getViewMatrix(), camera.getProjectionMatrix(), camera.getPosition());
+        }
     }
+
+    // Step 2: Sort transparent objects based on distance to camera
+    std::vector<std::shared_ptr<MyObject>> transparentObjects;
+    for (const auto &[key, object] : scene_objects)
+    {
+        if (object->isTransparent)
+        {
+            transparentObjects.push_back(object);
+        }
+    }
+
+    std::sort(transparentObjects.begin(), transparentObjects.end(),
+              [&](const std::shared_ptr<MyObject> &a, const std::shared_ptr<MyObject> &b)
+              {
+                  float distA = glm::distance(camera.getPosition(), a->getPosition());
+                  float distB = glm::distance(camera.getPosition(), b->getPosition());
+                  return distA > distB; // Sort back to front
+              });
+
+    // Step 3: Enable blending and render transparent objects
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDepthMask(GL_FALSE); // Disable depth writes for transparency
+
+    for (const auto &object : transparentObjects)
+    {
+        object->render(camera.getViewMatrix(), camera.getProjectionMatrix(), camera.getPosition());
+    }
+
+    // Restore default settings
+    glDepthMask(GL_TRUE);
+    glDisable(GL_BLEND);
 
     window.swapBuffers();
 }
