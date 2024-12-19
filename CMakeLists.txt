@@ -24,6 +24,9 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
     # Executable
     add_executable(${PROJECT_NAME} ${SOURCES})
 
+    # Rename the output artifact to "index.html"
+    set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "index")
+
     # Fetch glm using FetchContent
     include(FetchContent)
     FetchContent_Declare(
