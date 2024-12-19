@@ -19,7 +19,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
     # WebAssembly build
     message(STATUS "Building for WebAssembly with Emscripten")
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../docs)
 
     # Executable
     add_executable(${PROJECT_NAME} ${SOURCES})
