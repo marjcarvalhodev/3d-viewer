@@ -40,33 +40,35 @@ int main()
         assetsManager.loadShader("basicShader", "basic");
         std::shared_ptr<MyShader> basic_shader = assetsManager.getShader("basicShader");
 
-        assetsManager.loadShader("phongShader", "phong");
-        std::shared_ptr<MyShader> phong_shader = assetsManager.getShader("phongShader");
+        // assetsManager.loadShader("phongShader", "phong");
+        // std::shared_ptr<MyShader> phong_shader = assetsManager.getShader("phongShader");
 
-        assetsManager.loadShader("glassShader", "glass");
-        std::shared_ptr<MyShader> glass_shader = assetsManager.getShader("glassShader");
+        // assetsManager.loadShader("glassShader", "glass");
+        // std::shared_ptr<MyShader> glass_shader = assetsManager.getShader("glassShader");
 
 
 
         Material mat = {{0.5, 0.3, 0.36}, 50.0};
 
-        std::shared_ptr<MyObject> shiny_ball_1 = std::make_shared<MyObject>(ballMesh, mat, phong_shader);
-        std::shared_ptr<MyObject> wood_ball = std::make_shared<MyObject>(ballMesh, mat, basic_shader, false, "tree-bark.jpg");
-
-        std::shared_ptr<MyObject> shiny_diamond_1 = std::make_shared<MyObject>(diamondMesh, mat, glass_shader, true);
-        std::shared_ptr<MyObject> shiny_diamond_2 = std::make_shared<MyObject>(diamondMesh, mat, glass_shader, true);
+        std::shared_ptr<MyObject> wood_ball = std::make_shared<MyObject>(ballMesh, mat, basic_shader, false);
+        
+        // std::shared_ptr<MyObject> shiny_ball_1 = std::make_shared<MyObject>(ballMesh, mat, basic_shader);
+        // std::shared_ptr<MyObject> shiny_diamond_1 = std::make_shared<MyObject>(diamondMesh, mat, basic_shader, true);
+        // std::shared_ptr<MyObject> shiny_diamond_2 = std::make_shared<MyObject>(diamondMesh, mat, basic_shader, true);
 
         MyScene main_scene(camera);
 
-        shiny_ball_1->repositionObject({-2.0, 0.0, 2.0});
         wood_ball->repositionObject({-2.0, 0.0, -2.0});
-        shiny_diamond_1->repositionObject({2.0, 0.0, 2.0});
-        shiny_diamond_2->repositionObject({2.0, 0.0, -2.0});
 
-        main_scene.addSceneObjects("shiny_ball_1", shiny_ball_1);
+        // shiny_ball_1->repositionObject({-2.0, 0.0, 2.0});
+        // shiny_diamond_1->repositionObject({2.0, 0.0, 2.0});
+        // shiny_diamond_2->repositionObject({2.0, 0.0, -2.0});
+
         main_scene.addSceneObjects("shiny_ball_2", wood_ball);
-        main_scene.addSceneObjects("shiny_diamond_1", shiny_diamond_1);
-        main_scene.addSceneObjects("shiny_diamond_2", shiny_diamond_2);
+
+        // main_scene.addSceneObjects("shiny_ball_1", shiny_ball_1);
+        // main_scene.addSceneObjects("shiny_diamond_1", shiny_diamond_1);
+        // main_scene.addSceneObjects("shiny_diamond_2", shiny_diamond_2);
 
         float lastTime = SDL_GetTicks() / 1000.0f; // Initialize lastTime in seconds
 
@@ -78,10 +80,10 @@ int main()
 
             handleInput(event, running);
 
-            for (const auto &[key, object] : main_scene.getAllSceneObjects())
-            {
-                main_scene.animateObject(object, deltaTime);
-            }
+            // for (const auto &[key, object] : main_scene.getAllSceneObjects())
+            // {
+            //     main_scene.animateObject(object, deltaTime);
+            // }
 
             main_scene.renderScene(window);
         }

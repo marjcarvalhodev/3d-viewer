@@ -67,6 +67,7 @@ if [ "$BUILD_WASM" = true ]; then
     emmake make
 
     echo "Copying WebAssembly build artifacts to docs directory..."
+    rm -rf "../$DOCS_DIR"
     mkdir -p "../$DOCS_DIR"
     cp *.data *.html *.js *.wasm "../$DOCS_DIR/"
 
@@ -92,12 +93,45 @@ else
     fi
 fi
 
-# Serve and open in browser
+# # Serve and open in browser
+# if [ "$SERVE" = true ]; then
+#     echo "Starting HTTP server and opening browser..."
+#     cd "../$DOCS_DIR"
+#     python3 -m http.server 8000 & # Start server in the background
+#     SERVER_PID=$!
+#     sleep 2 # Give the server time to start
+#     echo "Press Ctrl+C to stop the server."
+#     wait $SERVER_PID # Wait for the server process
+# fi
+
+# Serve and open in browser 
 if [ "$SERVE" = true ]; then
-    echo "Starting HTTP server and opening browser..."
+    echo "Starting HTTP server with WASM MIME type and opening browser..."
     cd "../$DOCS_DIR"
-    python3 -m http.server 8000 & # Start server in the background
+    
+    # Use a custom HTTP server to include the WASM MIME type
+    python3 -m http.server 8000 --bind 127.0.0.1 &
     SERVER_PID=$!
+    
+    # Add a custom MIME handler for WebAssembly files
+    echo "Adding MIME type for .wasm files..."
+    python3 - <<EOF &
+import http.server
+import socketserver
+
+class WASMHandler(http.server.SimpleHTTPRequestHandler):
+    extensions_map = {
+        **http.server.SimpleHTTPRequestHandler.extensions_map,
+        '.wasm': 'application/wasm',
+    }
+
+PORT = 8000
+Handler = WASMHandler
+with socketserver.TCPServer(("", PORT), Handler) as httpd:
+    print(f"Serving HTTP on 127.0.0.1 port {PORT} (http://127.0.0.1:{PORT}/) ...")
+    httpd.serve_forever()
+EOF
+
     sleep 2 # Give the server time to start
     echo "Press Ctrl+C to stop the server."
     wait $SERVER_PID # Wait for the server process

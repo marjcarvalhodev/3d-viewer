@@ -3,7 +3,7 @@
 MyShader::MyShader(ShaderSources sources)
     : sources(sources), shaderProgram(0), vertexShader(0), fragmentShader(0)
 {
-    validateShader(sources.vertex, sources.fragment);
+    // validateShader(sources.vertex, sources.fragment);
 
     vertexShader = compileShader(sources.vertex.c_str(), ShaderType::Vertex);
     fragmentShader = compileShader(sources.fragment.c_str(), ShaderType::Fragment);

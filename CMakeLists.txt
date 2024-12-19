@@ -1,5 +1,5 @@
 # Minimum CMake version
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.13)
 
 # Project name
 set(PROJECT_NAME "3D-Viewer")
@@ -37,11 +37,12 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
     add_library(webassembly_flags INTERFACE)
     target_compile_options(webassembly_flags INTERFACE
         "-sUSE_SDL=2"
-        "-sUSE_WEBGL2=1"
-        "-sFULL_ES3=1"
-        "-sALLOW_MEMORY_GROWTH=1"
-        "-sMAX_WEBGL_VERSION=2"
-        "-sMIN_WEBGL_VERSION=2"
+        "-sUSE_WEBGL2=0"
+        "-sFULL_ES2=1"
+        "-sALLOW_MEMORY_GROWTH"
+        "-sINITIAL_MEMORY=64MB"
+        "-sEXPORTED_FUNCTIONS=_main"
+        "-sEXPORTED_RUNTIME_METHODS=ccall,cwrap"
     )
     target_link_options(webassembly_flags INTERFACE "--preload-file=assets")
     target_link_libraries(${PROJECT_NAME} PRIVATE SDL2 glm::glm webassembly_flags)

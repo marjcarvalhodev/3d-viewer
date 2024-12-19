@@ -1,17 +1,17 @@
-#version 100
-attribute vec3 aPos;    // Vertex position
-attribute vec3 aNormal; // Vertex normal
+precision mediump float;
+
+attribute vec3 aPos;         // Vertex position
+attribute vec3 aNormal;      // Vertex normal
+attribute vec2 aTexCoord;    // Texture coordinates
+
+varying vec2 TexCoords;      // Pass to fragment shader
 
 uniform mat4 uModel;
 uniform mat4 uView;
 uniform mat4 uProjection;
-
-varying vec3 FragPos;   // Fragment position in world space
-varying vec3 Normal;    // Normal vector in world space
+uniform float uvScale;
 
 void main() {
-    FragPos = vec3(uModel * vec4(aPos, 1.0)); // Transform to world space
-    Normal = normalize(mat3(uModel) * aNormal); // Transform normal (simplified for WebGL 1.0)
-
-    gl_Position = uProjection * uView * uModel * vec4(aPos, 1.0); // Transform to clip space
+    TexCoords = aTexCoord * uvScale; // Scale the texture coordinates
+    gl_Position = uProjection * uView * uModel * vec4(aPos, 1.0);
 }
